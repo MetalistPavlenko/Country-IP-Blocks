@@ -1,5 +1,4 @@
-import math, re
-from urllib.request import Request, urlopen
+import math, re, urllib.request
 
 data = []
 
@@ -9,7 +8,7 @@ urls = ['https://ftp.apnic.net/stats/apnic/delegated-apnic-latest',
         'https://ftp.arin.net/pub/stats/arin/delegated-arin-extended-latest',
         'https://ftp.afrinic.net/pub/stats/afrinic/delegated-afrinic-latest']
 
-for url in urls: data += urlopen(Request(url)).read().decode()
+for url in urls: data += urllib.request.urlopen(urllib.request.Request(url, headers = {'User-Agent': 'curl/7.88.1'})).read().decode()
 
 blocks = {
     'ipv4':{
@@ -25,9 +24,9 @@ blocks = {
 for sort in blocks:
     for line in blocks[sort]['data']:
         if sort == 'ipv4':
-            ip = line[1] + '/' + str(int(32-math.log(int(line[2]))/math.log(2)))
+            ip = line[1]+'/'+str(int(32-math.log(int(line[2]))/math.log(2)))
         else:
-            ip = line[1] + '/' + str(line[2])
+            ip = line[1]+'/'+str(line[2])
 
         if line[0] not in blocks[sort]['countries']:
             blocks[sort]['countries'][line[0]] = []
